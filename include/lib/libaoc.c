@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#include "aoclib.h"
+#include "libaoc.h"
 
 void super_strstr(char *haystack, char *needle, int *indices) {
   char *ptr, *temp_haystack;

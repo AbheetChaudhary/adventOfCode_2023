@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include "lib/aoclib.h"
+#include "lib/libaoc.h"
 
 #define LINE_LENGTH 256
 #define MAX_OCCURANCE LINE_LENGTH
