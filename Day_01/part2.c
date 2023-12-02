@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
+#include "lib/aoclib.h"
 
 #define LINE_LENGTH 256
 #define MAX_OCCURANCE LINE_LENGTH
@@ -14,11 +14,10 @@ struct Digit {
 char *digitspellings[10] = {"zero", "one", "two", "three", "four", "five", "six",
   "seven", "eight", "nine"};
 
-void digitsweep(struct Digit **, char *);
-void spellingsweep(struct Digit **, char *);
-void adddigit(struct Digit **, struct Digit *);  // no error handling, it must always succeed
-int superstrstr(char *, char *, int *);
-void printdigit(struct Digit *);
+void digit_sweep(struct Digit **, char *);
+void spelling_sweep(struct Digit **, char *);
+void add_digit(struct Digit **, struct Digit *);  // no error handling, it must always succeed
+void print_digit(struct Digit *);
 
 int main(int argc, char **argv) {
   if(argc != 2) {
@@ -37,8 +36,8 @@ int main(int argc, char **argv) {
   char line[LINE_LENGTH];
   while(fgets(line, LINE_LENGTH, fp)) {
     struct Digit *dp[LINE_LENGTH] = {NULL};
-    digitsweep(dp, line);
-    spellingsweep(dp, line);
+    digit_sweep(dp, line);
+    spelling_sweep(dp, line);
 
     // get first & last digit
     int first = 0, first_index = LINE_LENGTH;
@@ -69,54 +68,42 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-void digitsweep(struct Digit **dp, char *line) {
+void digit_sweep(struct Digit **dp, char *line) {
   for(int i = 0; line[i] != '\0'; i++) {
     if(isdigit(line[i])) {
       struct Digit *digit_p = (struct Digit *) malloc(sizeof(struct Digit));
       digit_p->digit = line[i] - '0';
       digit_p->index = i;
-      adddigit(dp, digit_p);
+      add_digit(dp, digit_p);
     }
   }
 
   return;
 }
 
-void spellingsweep(struct Digit **dp, char *line) {
+void spelling_sweep(struct Digit **dp, char *line) {
   for(int i = 0; i < 10; i++) {
     int *indices = (int *) malloc(MAX_OCCURANCE * sizeof(int));
-    superstrstr(line, digitspellings[i], indices);
+    super_strstr(line, digitspellings[i], indices);
 
     for(int j = 0; indices[j] != -1 && j < MAX_OCCURANCE; j++) {
       struct Digit *digit_p = (struct Digit *) malloc(sizeof(struct Digit));
       digit_p->digit = i;
       digit_p->index = indices[j];
-      adddigit(dp, digit_p);
+      add_digit(dp, digit_p);
     }
 
     free(indices);
   }
 }
 
-void adddigit(struct Digit **dp, struct Digit *digit_p) {
+void add_digit(struct Digit **dp, struct Digit *digit_p) {
   int i = 0;
   while(dp[i] != NULL) i++;
   dp[i] = digit_p;
   return;
 }
 
-int superstrstr(char *haystack, char *needle, int *indices) {
-  char *ptr, *temp_haystack;
-  temp_haystack = haystack;
-  int i;
-  for(i = 0; (ptr = strstr(haystack, needle)) != NULL; i++) {
-    indices[i] = ptr - temp_haystack;
-    haystack = ptr + 1;
-  }
-
-  indices[i] = -1;
-}
-
-void printdigit(struct Digit *digit) {
+void print_digit(struct Digit *digit) {
   printf("{digit: %d, index: %d}\n", digit->digit, digit->index);
 }
